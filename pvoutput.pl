@@ -56,14 +56,9 @@ use constant {
 #
 my @PVOUTPUT = (
 	{
-		SERIAL_NUM    => "1234567890",
-		API_KEY       => "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-		SYSTEM_ID     => "XXX",
-	},
-  	{
-		SERIAL_NUM    => "1009BO1383",
-		API_KEY       => "7d6f0c8f79fcec98437a4ab339a753fafb4f2e7a",
-		SYSTEM_ID     => "802",
+		SERIAL_NUM    => "<REPLACE WITH YOUR INVERTER SERIAL NUMBER>",
+		API_KEY       => "<REPLACE WITH YOUR pvoutout API KEY>",
+		SYSTEM_ID     => "<REPLACE WITH YOUR pvoutout SYSTEM ID>",
 	},
 );
 
@@ -99,7 +94,7 @@ for $i ( 0 .. $#PVOUTPUT ) {
          "X-Pvoutput-SystemId" => $PVOUTPUT[$i]{SYSTEM_ID},
          "Content-Type"        => "application/x-www-form-urlencoded"
       );
-              
+
       #
       # Prepare request string
       #
@@ -118,7 +113,7 @@ for $i ( 0 .. $#PVOUTPUT ) {
          die "Error via pvoutput.org: " . $res->content . "\n";
          #die "Couldn't submit data to pvoutput.org: " . $res->status_line . "\n";
       }
-              
+
    }
 }
 

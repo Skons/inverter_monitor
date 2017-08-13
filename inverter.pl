@@ -338,7 +338,7 @@ $config->define( "data_errmode_index=s"  );
 $config->define( "data_errmode_descr=s"  );
 
 # fill variables by reading configuration file
-$config->file( "config.ini" ) || die "FAILED to open and/or read config file: config.ini\n";
+$config->file( "/home/pi/inverter_monitor/config.ini" ) || die "FAILED to open and/or read config file: config.ini\n";
 
 if ($config->flags_debug) {
   print "debug=" . $config->flags_debug ;
@@ -979,7 +979,7 @@ sub setPvoutputTimes() {
 
 #######################################################################
 #
-# Sleep until nextPollTime 
+# Sleep until nextPollTime
 #
 sub sleepTilNextPoll() {
   my $seconds = $nextPollTime - time;
@@ -1162,7 +1162,7 @@ sub writeReadBuffer() {
   $noTalks++;
   print "Waited " . $config->secs_timeout . " seconds and never saw $readPattern\n";
   print "noTalks=$noTalks, reInits=$reInits.\n";
-  
+
   #
   # Reset number of noTalks & attempt ReInit
   #
@@ -1189,7 +1189,7 @@ sub writeReadBuffer() {
     print "Re-Init attempt $reInits...\n";
     &main();
   }
-  
+
   return "";
 } #end writeReadBuffer
 
@@ -1257,11 +1257,12 @@ sub initialiseInverter() {
 # Parse Version/Firmware Data - store in %HASH
 #
 sub parseVersData() {
-  print "* Version info:\n";
+  # Lucas: commented out version printing because it has screwy ascci characters that inferfere with the logs
+  #print "* Version info:\n";
   my $hexData = shift;
   my $asciiVers = ( pack ("H*", $hexData) );
   my $hexLength = length($hexData);
-  print "asciiVers=$asciiVers\n";
+  #print "asciiVers=$asciiVers\n";
 
   #
   # convert portions of hex to ascii
@@ -1458,7 +1459,7 @@ sub parseData() {
   my $lastEtoday = $HoH{ETODAY}{VALUE};
   my $lastEtotal = ($HoH{ETOTALL}{VALUE} + $HoH{ETOTALH}{VALUE});
   my $lastHtotal = ($HoH{HTOTALL}{VALUE} + $HoH{HTOTALH}{VALUE});
-  
+
   # split hex string into an array of 4char hex strings
   @d = ( $data =~ m/..?.?.?/g );
 
@@ -1609,7 +1610,7 @@ sub main() {
    if ( ! &isValidPollTime() ) {
      die "Exiting, as " . &getTime_HHMMSS() . " is outside valid poll times: " . $config->time_start_poll . " to " . $config->time_end_poll . "\n";
    }
-   
+
    #
    # Initialise Poll & Pvoutput times
    #
@@ -1657,7 +1658,7 @@ sub main() {
    #
    # The main loop starts here
    #
-   while (1) {
+   #while (1) {
 
      #
      # Request Inverter Data (regular data poll)
@@ -1672,25 +1673,27 @@ sub main() {
      # Export data to http://pvoutput.org
      #
      if ($config->flags_use_pvoutput) {
-       if ( &isNextPvoutputDue() ) {
+       #if ( &isNextPvoutputDue() ) {       #Lucas: this never worked for me, running as a cron instead
          my $date = &getDate_YYYYMMDD();
          my $time = &getTime_HHMM();
          print "PVOUTPUT as at " . &getDateTime() . " ...\n";
          print "  ran: " . $config->scripts_pvoutput . " " . ($HoH{ETODAY}{VALUE} * 1000) . " $HoH{PAC}{VALUE} $date $time $HASH{SERIAL} $HoH{VPV1}{VALUE} $HoH{TEMP}{VALUE}\n";
          system ($config->scripts_pvoutput . " " . ($HoH{ETODAY}{VALUE} * 1000) . " $HoH{PAC}{VALUE} $date $time $HASH{SERIAL} $HoH{VPV1}{VALUE} $HoH{TEMP}{VALUE}" );
          &setPvoutputTimes();
-       }
+       #}
+       #else {
+       #   print "No PVOUTPUT update due. Try in a couple of minutes!\n";
+       #}
      }
 
      #
      # Sleep until next time data needs to be polled (per $config->secs_datapoll_freq)
      #
-     &sleepTilNextPoll();
+     #&sleepTilNextPoll();
 
-   } #end while
+   #} #end while
 } #end main
 
 #######################################################################
 
 &main();
-
