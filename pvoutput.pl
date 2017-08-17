@@ -57,8 +57,8 @@ use constant {
 my @PVOUTPUT = (
 	{
 		SERIAL_NUM    => "<REPLACE WITH YOUR INVERTER SERIAL NUMBER>",
-		API_KEY       => "<REPLACE WITH YOUR pvoutout API KEY>",
-		SYSTEM_ID     => "<REPLACE WITH YOUR pvoutout SYSTEM ID>",
+		API_KEY       => "<REPLACE WITH YOUR PVOutput API KEY>",
+		SYSTEM_ID     => "<REPLACE WITH YOUR PVOutput SYSTEM ID>",
 	},
 );
 
