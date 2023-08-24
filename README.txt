@@ -75,6 +75,12 @@
           If the task is already running, then the following rule applies: 'Do not start a new instance'
           -> OK
 
+   10) If MQTT is enabled:
+       * Install paho-mqtt with the following command: pip install paho-mqtt
+       * Edit mqtt.py to configure your MQTT server
+       * All data will be sent to {mqtt_base_topic}/{serial#}/{item}. I.e. invertermonitor/0123456789/pac. The serial number can skipped if wanted.
+
+
    NOTE: If you need to kill the process manually: open Task Manager > Processes > Tick 'Show Processes from all users' > right click 'perl.exe' > select 'End Process'.
 
    Links:
@@ -155,8 +161,8 @@ Send -> req version: aaaa01000001010300015a
 Recv <- aaaa000101000183403120203230303041412e303020202020434d532032303030202020
 2050484f454e495854454320202020202000112233445566778899000000000000333630300dcc
 * Version info:
-asciiVers=¬¬ ?? ?â@1  2000AA.00    CMS 2000    PHOENIXTEC      0123456789      3
-¦00
+asciiVers=ï¿½ï¿½ ?? ?ï¿½@1  2000AA.00    CMS 2000    PHOENIXTEC      0123456789      3
+ï¿½00
 CAPACITY : 2000
 FIRMWARE : AA.00
 MANUF    : PHOENIXTEC

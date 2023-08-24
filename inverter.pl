@@ -75,6 +75,10 @@
 # + editions by slampt:
 #          + uncommented & edited rrdtool (graphing) code in writeToFile() with help from JinbaIttai
 #
+# + editions by skons:
+#          + implemented MQTT
+#          + added getDate_YYYYMMDDDashed
+#
 #######################################################################
 #
 # Required to be installed:
@@ -111,6 +115,7 @@ my $config = AppConfig->new();
 $config->define( "flags_debug!"          );
 $config->define( "flags_use_pvoutput!"   );
 $config->define( "flags_use_rrdtool!"    );
+$config->define( "flags_use_mqtt!"       );
 $config->define( "secs_datapoll_freq=s"  );
 $config->define( "secs_pvoutput_freq=s"  );
 $config->define( "secs_timeout=s"        );
@@ -121,6 +126,7 @@ $config->define( "paths_windows=s"       );
 $config->define( "paths_other=s"         );
 $config->define( "scripts_pvoutput=s"    );
 $config->define( "scripts_create_rrd=s"  );
+$config->define( "scripts_mqtt=s"        );
 $config->define( "scripts_rrdtool_exe_win=s" );
 $config->define( "scripts_rrdtool_exe_oth=s" );
 $config->define( "serial_baud=s"         );
@@ -344,6 +350,7 @@ if ($config->flags_debug) {
   print "debug=" . $config->flags_debug ;
   print ", use_pvoutput=" . $config->flags_use_pvoutput ;
   print ", use_rrdtool=" . $config->flags_use_rrdtool ;
+  print ", use_mqtt=" . $config->flags_use_mqtt ;
   print ", hex_serial_length=" . $config->hex_serial_length . "\n" ;
   print "time_start_poll=" . $config->time_start_poll ;
   print ", time_end_poll=" . $config->time_end_poll . "\n" ;
@@ -931,6 +938,15 @@ sub getDate_YYYYMMDD() {
   local($sec,$min,$hour,$dayOfMth,$monthOffset,$yearOffset,$dayOfWk,$dayOfYr,$isDST) = localtime;
   return sprintf("%04d%02d%02d", $yearOffset+1900, $monthOffset+1, $dayOfMth);
 } #end getDate_YYYYMMDD
+
+#######################################################################
+#
+# Return Date in format: "YYYY-MM-DD"
+#
+sub getDate_YYYYMMDDDashed() {
+  local($sec,$min,$hour,$dayOfMth,$monthOffset,$yearOffset,$dayOfWk,$dayOfYr,$isDST) = localtime;
+  return sprintf("%04d-%02d-%02d", $yearOffset+1900, $monthOffset+1, $dayOfMth);
+} #end getDate_YYYYMMDDDashed
 
 #######################################################################
 #
@@ -1684,6 +1700,20 @@ sub main() {
        #else {
        #   print "No PVOUTPUT update due. Try in a couple of minutes!\n";
        #}
+     }
+
+     #
+     # Export data to MQTT
+     #
+     if ($config->flags_use_mqtt) {
+        my $date = &getDate_YYYYMMDDDashed();
+        my $time = &getTime_HHMMSS();
+        print "MQTT as at " . &getDateTime() . " ...\n";
+        print "  ran: " . $config->scripts_mqtt . " " . ($HoH{ETODAY}{VALUE} * 1000) . " $HoH{PAC}{VALUE} $date $time $HASH{SERIAL} $HoH{VPV1}{VALUE} $HoH{TEMP}{VALUE}\n";
+        system ($config->scripts_mqtt . " --etoday " . ($HoH{ETODAY}{VALUE} * 1000) . " --pac $HoH{PAC}{VALUE} --date $date --time $time --serial $HASH{SERIAL} --vpv1 $HoH{VPV1}{VALUE} --vpv2 $HoH{VPV2}{VALUE} --vpv3 $HoH{VPV3}{VALUE} --temp $HoH{TEMP}{VALUE} --idc1 $HoH{IDC1}{VALUE} --idc2 $HoH{IDC2}{VALUE} --idc3 $HoH{IDC3}{VALUE} " .
+        "--etotalh $HoH{ETOTALH}{VALUE} --etotall $HoH{ETOTALL}{VALUE} --htotalh $HoH{HTOTALH}{VALUE} --htotall $HoH{HTOTALL}{VALUE} --mode $HoH{MODE}{VALUE} --err_gv $HoH{ERR_GV}{VALUE} --err_gf $HoH{ERR_GF}{VALUE} --err_gz $HoH{ERR_GZ}{VALUE} --err_temp $HoH{ERR_TEMP}{VALUE} --err_pv1 $HoH{ERR_PV1}{VALUE} --err_gfc1 $HoH{ERR_GFC1}{VALUE} " .
+        "--err_mode $HoH{ERR_MODE}{VALUE} --iac1 $HoH{IAC1}{VALUE} --vac1 $HoH{VAC1}{VALUE} --fac1 $HoH{FAC1}{VALUE} --pdc1 $HoH{PDC1}{VALUE} --unk10 $HoH{UNK10}{VALUE} --unk11 $HoH{UNK11}{VALUE} --unk12 $HoH{UNK12}{VALUE} --unk13 $HoH{UNK13}{VALUE} --iac2 $HoH{IAC2}{VALUE} --vac2 $HoH{VAC2}{VALUE} --fac2 $HoH{FAC2}{VALUE} " .
+        "--pdc2 $HoH{PDC2}{VALUE} --unk14 $HoH{UNK14}{VALUE}");
      }
 
      #

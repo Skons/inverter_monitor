@@ -1,7 +1,7 @@
 Inverter Monitor on Raspberry Pi for Samil Solar River Inverter via Serial
 =================================================================
 
-Perl script for monitoring an older Samil Solar River inverter using the RS232 (serial) connection, and uploading data to https://pvoutput.org.
+Perl script for monitoring an older Samil Solar River inverter using the RS232 (serial) connection, and uploading data to https://pvoutput.org and/or MQTT.
 
 See this blog post for a full explanation and instructions: [Logging Solar Inverter Output with a Raspberry Pi](https://lucascosti.com/blog/2017/08/logging-solar-inverter-output-with-a-raspberry-pi/).
 
