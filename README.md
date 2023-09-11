@@ -7,4 +7,4 @@ See this blog post for a full explanation and instructions: [Logging Solar Inver
 
 This script has been modified from the original script hosted on the now-seemingly-defunct Solar Freaks forum.
 
-Credit to trollkarlen for [uploading the original script to GitHub](https://github.com/trollkarlen/inverter_monitor), and to ['belly' for this post on modification tips](https://cqlug.linux.org.au/node/219).
+Credit to trollkarlen for [uploading the original script to GitHub](https://github.com/trollkarlen/inverter_monitor), ['belly' for this post on modification tips](https://cqlug.linux.org.au/node/219), and skons for adding [the MQTT functionality](https://github.com/lucascosti/inverter_monitor/pull/3/). 
